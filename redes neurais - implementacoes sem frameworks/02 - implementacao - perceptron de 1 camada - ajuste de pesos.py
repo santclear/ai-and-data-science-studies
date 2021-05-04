@@ -8,7 +8,7 @@ Created on Mon May  3 23:31:13 2021
 import numpy as numpy
 
 entradas = numpy.array([[0,0], [0,1], [1,0], [1,1]])
-saidas = numpy.array([0, 0, 0, 1])
+saidasEsperadas = numpy.array([0, 0, 0, 1])
 
 pesos = numpy.array([0.0, 0.0])
 taxaAprendizagem = 0.1
@@ -29,9 +29,9 @@ def treinar():
     erroTotal = 1
     while(erroTotal != 0):
         erroTotal = 0
-        for i in range(len(saidas)):
+        for i in range(len(saidasEsperadas)):
             saidaCalculada = calculaSaida(numpy.asarray(entradas[i]))
-            erro = abs(saidas[i] - saidaCalculada)
+            erro = abs(saidasEsperadas[i] - saidaCalculada)
             erroTotal += erro
             for j in range(len(pesos)):
                 pesos[j] = pesos[j] + (taxaAprendizagem * entradas[i][j] * erro)
