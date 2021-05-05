@@ -49,3 +49,6 @@ for j in range(epocas):
     
     somaSinapse1 = numpy.dot(camadaOculta, pesosSaidaCamadaOculta)
     camadaSaida = sigmoid(somaSinapse1)
+    
+    erroCamadaSaida = saidasEsperadas - camadaSaida
+    mediaAbsolutaErroCamadaSaida = numpy.mean(numpy.abs(erroCamadaSaida))
