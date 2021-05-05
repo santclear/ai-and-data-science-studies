@@ -59,3 +59,8 @@ for j in range(epocas):
     
     derivadaSaida = sigmoidDerivada(camadaSaida)
     deltaSaida = erroCamadaSaida * derivadaSaida
+    
+    # Necessário fazer a transposta porque os 2 arrays não tem o mesmo tamanho
+    pesosSaidaCamadaOcultaTransposta = pesosSaidaCamadaOculta.T
+    deltaSaidaXPesoSaidaCamadaOculta = deltaSaida.dot(pesosSaidaCamadaOcultaTransposta)
+    deltaCamadaOculta = deltaSaidaXPesoSaidaCamadaOculta * sigmoidDerivada(camadaOculta)
