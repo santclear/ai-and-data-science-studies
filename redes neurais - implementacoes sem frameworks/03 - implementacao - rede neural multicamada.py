@@ -10,6 +10,10 @@ import numpy as numpy
 def sigmoid(soma):
     return 1 / (1 + numpy.exp(-soma))
 
+# Parte do cálculo da descida do gradiente
+def sigmoidDerivada(sigmoid):
+    return sigmoid * (1 - sigmoid)
+
 entradas = numpy.array([
     [0,0],
     [0,1],
@@ -52,3 +56,6 @@ for j in range(epocas):
     
     erroCamadaSaida = saidasEsperadas - camadaSaida
     mediaAbsolutaErroCamadaSaida = numpy.mean(numpy.abs(erroCamadaSaida))
+    
+    derivadaSaida = sigmoidDerivada(camadaSaida)
+    deltaSaida = erroCamadaSaida * derivadaSaida
