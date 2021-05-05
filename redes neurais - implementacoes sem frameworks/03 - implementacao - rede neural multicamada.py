@@ -37,6 +37,12 @@ pesosSaidaCamadaOculta = numpy.array([
 
 epocas = 100
 
+# velocidade de deslocamento da descida do gradiente
+taxaAprendizagem = 0.3
+
+# objetivo de evitar mínimos locais na descida do gradiente 
+momento = 1
+
 for j in range(epocas):
     camadaEntrada = entradas
     
@@ -64,3 +70,9 @@ for j in range(epocas):
     pesosSaidaCamadaOcultaTransposta = pesosSaidaCamadaOculta.T
     deltaSaidaXPesoSaidaCamadaOculta = deltaSaida.dot(pesosSaidaCamadaOcultaTransposta)
     deltaCamadaOculta = deltaSaidaXPesoSaidaCamadaOculta * sigmoidDerivada(camadaOculta)
+    
+    camadaOcultaTransposta = camadaOculta.T
+    camadaOcultaXDeltaSaida = camadaOcultaTransposta.dot(deltaSaida)
+    
+    # Atualização de pesos
+    pesosSaidaCamadaOculta = (pesosSaidaCamadaOculta * momento) + (camadaOcultaXDeltaSaida * taxaAprendizagem)
