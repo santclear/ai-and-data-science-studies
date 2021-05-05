@@ -46,3 +46,6 @@ for j in range(epocas):
     """
     somasSinapse0 = numpy.dot(camadaEntrada, pesosEntradaCamadaOculta)
     camadaOculta = sigmoid(somasSinapse0)
+    
+    somaSinapse1 = numpy.dot(camadaOculta, pesosSaidaCamadaOculta)
+    camadaSaida = sigmoid(somaSinapse1)
