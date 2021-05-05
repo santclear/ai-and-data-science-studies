@@ -32,3 +32,17 @@ pesosSaidaCamadaOculta = numpy.array([
     [0.148]])
 
 epocas = 100
+
+for j in range(epocas):
+    camadaEntrada = entradas
+    
+    """ Como está sendo calculado:
+    0 --> (0 * -424) + (1 * 0,358) = 0,358 ... (0 * -0,740) + (1 * -0,577) = -0,577 ...
+    1 _/
+    ...
+    1 --> ...
+    0 _/
+    ...
+    """
+    somasSinapse0 = numpy.dot(camadaEntrada, pesosEntradaCamadaOculta)
+    camadaOculta = sigmoid(somasSinapse0)
