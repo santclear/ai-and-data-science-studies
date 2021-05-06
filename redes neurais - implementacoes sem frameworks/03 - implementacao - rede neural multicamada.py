@@ -26,16 +26,20 @@ saidasEsperadas = numpy.array([
     [1],
     [0]])
 
-pesosEntradaCamadaOculta = numpy.array([
+"""pesosEntradaCamadaOculta = numpy.array([
     [-0.424, -0.740, -0.961],
     [0.358, -0.577, -0.469]])
     
 pesosSaidaCamadaOculta = numpy.array([
     [-0.017],
     [-0.893],
-    [0.148]])
+    [0.148]])"""
 
-epocas = 100
+pesosEntradaCamadaOculta = 2 * numpy.random.random((2,3)) - 1
+
+pesosSaidaCamadaOculta = 2 * numpy.random.random((3,1)) - 1
+
+epocas = 10
 
 # velocidade de deslocamento da descida do gradiente
 taxaAprendizagem = 0.3
@@ -62,6 +66,7 @@ for j in range(epocas):
     
     erroCamadaSaida = saidasEsperadas - camadaSaida
     mediaAbsolutaErroCamadaSaida = numpy.mean(numpy.abs(erroCamadaSaida))
+    print("Média absoluta do erro: "+ str(mediaAbsolutaErroCamadaSaida * 100))
     
     derivadaSaida = sigmoidDerivada(camadaSaida)
     deltaSaida = erroCamadaSaida * derivadaSaida
@@ -76,3 +81,8 @@ for j in range(epocas):
     
     # Atualização de pesos
     pesosSaidaCamadaOculta = (pesosSaidaCamadaOculta * momento) + (camadaOcultaXDeltaSaida * taxaAprendizagem)
+    
+    camadaEntradaTransposta = camadaEntrada.T
+    camadaEntradaXDeltaCamadaOculta = camadaEntradaTransposta.dot(deltaCamadaOculta)
+    
+    pesosEntradaCamadaOculta = (pesosEntradaCamadaOculta * momento) + (camadaEntradaXDeltaCamadaOculta * taxaAprendizagem)
