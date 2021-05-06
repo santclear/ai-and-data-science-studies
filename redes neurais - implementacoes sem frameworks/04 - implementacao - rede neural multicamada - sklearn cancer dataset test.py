@@ -30,7 +30,7 @@ pesosEntradaCamadaOculta = 2 * numpy.random.random((quantidadeAtributosEntradaBa
 # 3 idem anterios, deve ser igual
 pesosSaidaCamadaOculta = 2 * numpy.random.random((3,1)) - 1
 
-epocas = 10
+epocas = 1000000
 
 # velocidade de deslocamento da descida do gradiente
 taxaAprendizagem = 0.3
@@ -77,3 +77,11 @@ for j in range(epocas):
     camadaEntradaXDeltaCamadaOculta = camadaEntradaTransposta.dot(deltaCamadaOculta)
     
     pesosEntradaCamadaOculta = (pesosEntradaCamadaOculta * momento) + (camadaEntradaXDeltaCamadaOculta * taxaAprendizagem)
+    
+print("Resultado da previsão: ")
+for k in range(len(saidasEsperadas)):
+    camadaSaidaArredondada = round(camadaSaida[k][0])
+    if(saidasEsperadas[k][0] == camadaSaidaArredondada):
+        print("Acertou! Esperava: "+ str(saidasEsperadas[k][0]) +" | Encontrou: "+ str(camadaSaidaArredondada))
+    else:
+        print("Errou :-( Esperava: "+ str(saidasEsperadas[k][0]) +" | Encontrou: "+ str(camadaSaidaArredondada))
