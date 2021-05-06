@@ -24,7 +24,7 @@ saidasEsperadas = numpy.empty([tamanhoSaidasBase, 1], dtype = int)
 for i in range(tamanhoSaidasBase): # 569 registos
     saidasEsperadas[i] = saidasBase[i]
 
-quantidadeAtributosEntradaBase = len(entradasBase[0]) # 30 entradas
+quantidadeAtributosEntradaBase = len(entradasBase[0]) # 30 atributos
 # 3 quantidade de neurônios na camada oculta
 pesosEntradaCamadaOculta = 2 * numpy.random.random((quantidadeAtributosEntradaBase,3)) - 1
 # 3 idem anterios, deve ser igual
