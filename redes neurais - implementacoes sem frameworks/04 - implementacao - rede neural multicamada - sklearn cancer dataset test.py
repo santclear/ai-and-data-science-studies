@@ -19,12 +19,12 @@ base = datasets.load_breast_cancer()
 entradasBase = base.data
 saidasBase = base.target
 
-tamanhoSaidasBase = len(saidasBase) # 569
+tamanhoSaidasBase = len(saidasBase) # 569 registros
 saidasEsperadas = numpy.empty([tamanhoSaidasBase, 1], dtype = int)
-for i in range(tamanhoSaidasBase): # 569
+for i in range(tamanhoSaidasBase): # 569 registos
     saidasEsperadas[i] = saidasBase[i]
 
-quantidadeAtributosEntradaBase = len(entradasBase[0]) # 30
+quantidadeAtributosEntradaBase = len(entradasBase[0]) # 30 entradas
 # 3 quantidade de neurônios na camada oculta
 pesosEntradaCamadaOculta = 2 * numpy.random.random((quantidadeAtributosEntradaBase,3)) - 1
 # 3 idem anterios, deve ser igual
