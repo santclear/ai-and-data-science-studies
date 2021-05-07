@@ -8,6 +8,8 @@ Created on Thu May  6 20:39:15 2021
 import pandas
 from sklearn.model_selection import train_test_split
 
+import keras
+
 # Sequential, modelo sequencial de ligação entre camadas
 from keras.models import Sequential
 # Dense, camada densa, cada neurônio será ligado com todos os neurônios da 
@@ -37,10 +39,14 @@ classificador = Sequential()
 # kernel_initializer: inicialização dos pesos
 # input_dim: quantidade de atributos da camada de entrada. Nesse caso são 30 porque o dataset possuí 30 colunas. (atributos)
 classificador.add(Dense(units = 16, activation = 'relu', kernel_initializer = 'random_uniform', input_dim = 30))
+# aprofundamento da camada oculta, 16 neurônios em um segundo nível
+# não é necessário declarar input_dim porque não está conectado com a camada de
+# entrada, está conectado com a camada oculta de primeiro nível
+classificador.add(Dense(units = 16, activation = 'relu', kernel_initializer = 'random_uniform'))
 
 ### CRIAÇÃO DA CAMADA DE SAÍDA
-# como é um problema de classificação binária, saída retornará 0 ou 1, 
-# a função de ativação utilizada é a sigmoid
+# 1 neurônio na camada de saída como é um problema de classificação binária, 
+# saída retornará 0 ou 1, a função de ativação utilizada é a sigmoid
 classificador.add(Dense(units = 1, activation = 'sigmoid'))
 
 # optimizer: método de cálculo da descida do gradiente, definido como 
@@ -49,7 +55,15 @@ classificador.add(Dense(units = 1, activation = 'sigmoid'))
 # classificação binária, foi definido como binary_crossentropy
 # metrics: métrica utilizada na avaliação, quantos regs, classificados certos e 
 # quantos errados
-classificador.compile(optimizer = 'adam', loss = 'binary_crossentropy', metrics = ['binary_accuracy'])
+#classificador.compile(optimizer = 'adam', loss = 'binary_crossentropy', metrics = ['binary_accuracy'])
+
+# lr: taxa de aprendizagem
+# decay: decremento da taxa de aprendizagem a cada iteração, objetivo de suavizar
+# a descida do gradiente
+# clipvalue: prende o valor ao chegar no mínimo global da descida do gradiente
+otimizador = keras.optimizers.Adam(lr = 0.001, decay = 0.0001, clipvalue = 0.5)
+classificador.compile(otimizador, loss = 'binary_crossentropy', metrics = ['binary_accuracy'])
+
 
 # batch_size: a cada 10 registros calculados efetua o processo de ajuste dos pesos
 # quantas vezes serão efetuados os ajustes dos pesos
