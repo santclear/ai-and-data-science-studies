@@ -14,6 +14,8 @@ from keras.models import Sequential
 # camada subsequente, rede neural fully connected
 from keras.layers import Dense
 
+from sklearn.metrics import confusion_matrix, accuracy_score
+
 previsores = pandas.read_csv('../datasets/entradas_breast.csv')
 classe = pandas.read_csv('../datasets/saidas_breast.csv')
 
@@ -21,6 +23,7 @@ classe = pandas.read_csv('../datasets/saidas_breast.csv')
 # registros para realizar testes e o restante 75% para treinar
 # nesse caso a base tem 569 registros que serão divididos 
 # 143 (25%) registros para teste e 426 (75%) registros para treinamento
+# classeTeste: saídas esperadas
 (previsoresTreinamento, 
  previsoresTeste, 
  classeTreinamento, 
@@ -51,3 +54,17 @@ classificador.compile(optimizer = 'adam', loss = 'binary_crossentropy', metrics 
 # batch_size: a cada 10 registros calculados efetua o processo de ajuste dos pesos
 # quantas vezes serão efetuados os ajustes dos pesos
 classificador.fit(previsoresTreinamento, classeTreinamento, batch_size = 10, epochs = 100)
+
+previsoes = classificador.predict(previsoresTeste)
+previsoes = (previsoes > 0.5)
+
+precisao = accuracy_score(classeTeste, previsoes)
+
+# 0: benigno, 1: maligno
+# linha: classe
+# coluna: como foi classificado
+matriz = confusion_matrix(classeTeste, previsoes)
+
+# 1ª linha: valor da função de erro
+# 2ª linha: precisão
+resultado = classificador.evaluate(previsoresTeste, classeTeste)
