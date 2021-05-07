@@ -40,3 +40,14 @@ classificador.add(Dense(units = 16, activation = 'relu', kernel_initializer = 'r
 # a função de ativação utilizada é a sigmoid
 classificador.add(Dense(units = 1, activation = 'sigmoid'))
 
+# optimizer: método de cálculo da descida do gradiente, definido como 
+# otimizador adam (um tipo de otimizador estocástico - recomendável em muitos casos)
+# loss: função de perda, método de tratamento de erro, como é um problema de 
+# classificação binária, foi definido como binary_crossentropy
+# metrics: métrica utilizada na avaliação, quantos regs, classificados certos e 
+# quantos errados
+classificador.compile(optimizer = 'adam', loss = 'binary_crossentropy', metrics = ['binary_accuracy'])
+
+# batch_size: a cada 10 registros calculados efetua o processo de ajuste dos pesos
+# quantas vezes serão efetuados os ajustes dos pesos
+classificador.fit(previsoresTreinamento, classeTreinamento, batch_size = 10, epochs = 100)
