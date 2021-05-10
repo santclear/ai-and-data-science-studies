@@ -33,7 +33,7 @@ classe = pandas.read_csv('../datasets/saidas_breast.csv')
 
 classificador = Sequential()
 
-### CRIAÇÃO DA CAMADA O OCULTA E DEFINIÇÃO DA CAMADA DE ENTRADA
+### CRIAÇÃO DA CAMADA OCULTA E DEFINIÇÃO DA CAMADA DE ENTRADA
 # units: quantidade de neurônios da camada oculta. 16 escolhido com base no modelo (30 + 1) / 2
 # activation: função de ativação
 # kernel_initializer: inicialização dos pesos
@@ -45,7 +45,7 @@ classificador.add(Dense(units = 16, activation = 'relu', kernel_initializer = 'r
 classificador.add(Dense(units = 16, activation = 'relu', kernel_initializer = 'random_uniform'))
 
 ### CRIAÇÃO DA CAMADA DE SAÍDA
-# 1 neurônio na camada de saída como é um problema de classificação binária, 
+# 1 neurônio na camada de saída, como é um problema de classificação binária, 
 # saída retornará 0 ou 1, a função de ativação utilizada é a sigmoid
 classificador.add(Dense(units = 1, activation = 'sigmoid'))
 
