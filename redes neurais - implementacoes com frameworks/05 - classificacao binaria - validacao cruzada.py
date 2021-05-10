@@ -70,7 +70,8 @@ classificador = KerasClassifier(build_fn = criarRede, epochs = 100, batch_size =
 ### A validação cruzada é uma das formas mais utilizadas pelos cientístas e
 ### eficiente para a avaliação de redes neurais artificias
 # validação cruzada entre bases de treinamento e teste (cross validation),
-# cv: quantidade de execuções (nesse caso executado 10 vezes as 100 épocas)
+# cv: quantidade de execuções (nesse caso executado 10 vezes as 100 épocas),
+# o valor 10 é muito utilizado por pesquisadores
 resultados = cross_val_score(estimator = classificador, X = previsores, y = classe, cv = 10, scoring = 'accuracy')
 media = resultados.mean()
 # quantos valores estão variando em relação a média
