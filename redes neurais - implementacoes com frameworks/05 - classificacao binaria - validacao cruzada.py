@@ -65,7 +65,7 @@ classificador = KerasClassifier(build_fn = criarRede, epochs = 100, batch_size =
 resultados = cross_val_score(estimator = classificador, X = previsores, y = classe, cv = 10, scoring = 'accuracy')
 media = resultados.mean()
 # quantos valores estão variando em relação a média
-# quanto maior esse valor, maior é a tendência de overfiting (rede neural muito
+# quanto maior esse valor, maior é a tendência de overfitting (rede neural muito
 # adaptada aos dados de treinamento e teste, algo ruim, pois quando é passada
 # uma base nova à rede, ela não terá bons resultados)
 desvioPadrao = resultados.std()
