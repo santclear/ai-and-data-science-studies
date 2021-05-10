@@ -69,6 +69,16 @@ classificador.compile(otimizador, loss = 'binary_crossentropy', metrics = ['bina
 # quantas vezes serão efetuados os ajustes dos pesos
 classificador.fit(previsoresTreinamento, classeTreinamento, batch_size = 10, epochs = 100)
 
+# linha 0: pesos entre a camada de entrada (30 neurônios) e a camada oculata (16 neurônios)
+# linha 1: unidade de bias
+pesos0 = classificador.layers[0].get_weights()
+# linha 0: pesos entre as 2 camadas oculata (16 neurônios cada)
+# linha 1: unidade de bias
+pesos1 = classificador.layers[1].get_weights()
+# linha 0: pesos entre a camada oculta a camada de saída
+# linha 1: unidade de bias
+pesos2 = classificador.layers[2].get_weights()
+
 previsoes = classificador.predict(previsoresTeste)
 previsoes = (previsoes > 0.5)
 
