@@ -12,7 +12,7 @@ import keras
 from keras.models import Sequential
 # Dense, camada densa, cada neurônio será ligado com todos os neurônios da 
 # camada subsequente, rede neural fully connected
-from keras.layers import Dense
+from keras.layers import Dense, Dropout
 
 from keras.wrappers.scikit_learn import KerasClassifier
 from sklearn.model_selection import cross_val_score
@@ -29,10 +29,19 @@ def criarRede():
     # kernel_initializer: inicialização dos pesos
     # input_dim: quantidade de atributos da camada de entrada. Nesse caso são 30 porque o dataset possuí 30 colunas. (atributos)
     classificador.add(Dense(units = 16, activation = 'relu', kernel_initializer = 'random_uniform', input_dim = 30))
+    
+    # dropout de 20%(0.2) na camada de entrada
+    # O dropout zera aleatóriamente a entrada de alguns neurônios, com o objetivo 
+    # de mitigar o overfitting, é recomendável aplicar dropout entre 20% e 30%
+    classificador.add(Dropout(0.2))
+    
     # aprofundamento da camada oculta, 16 neurônios em um segundo nível
     # não é necessário declarar input_dim porque não está conectado com a camada de
     # entrada, está conectado com a camada oculta de primeiro nível
     classificador.add(Dense(units = 16, activation = 'relu', kernel_initializer = 'random_uniform'))
+    
+    # dropout de 20%(0.2) na camada oculta
+    classificador.add(Dropout(0.2))
     
     ### CRIAÇÃO DA CAMADA DE SAÍDA
     # 1 neurônio na camada de saída, como é um problema de classificação binária, 
