@@ -6,12 +6,11 @@ Created on Tue May 11 19:11:16 2021
 """
 
 import pandas as pd
-import keras
 # Sequential, modelo sequencial de ligação entre camadas
 from keras.models import Sequential
 # Dense, camada densa, cada neurônio será ligado com todos os neurônios da 
 # camada subsequente, rede neural fully connected
-from keras.layers import Dense, Dropout
+from keras.layers import Dense
 from keras.utils import np_utils
 from keras.wrappers.scikit_learn import KerasClassifier
 from sklearn.model_selection import cross_val_score
