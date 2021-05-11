@@ -18,6 +18,9 @@ from sklearn.model_selection import train_test_split
 # LabelEncoder: classe para converter atributo categórico em numérico
 from sklearn.preprocessing import LabelEncoder
 
+import numpy as np
+from sklearn.metrics import confusion_matrix
+
 base = pd.read_csv('iris.csv')
 
 # Todas as linhas (:) e colunas do 0 ao 3 (0:4), 4 é o limite!
@@ -67,3 +70,21 @@ classificador.add(Dense(units = 3, activation = 'softmax'))
 classificador.compile(optimizer = 'adam', loss = 'categorical_crossentropy', metrics = ['categorical_accuracy'])
 
 classificador.fit(previsoresTreinamento, classeTreinamento, batch_size = 10, epochs = 1000)
+
+# 1ª linha: valor da função de erro
+# 2ª linha: precisão
+resultado = classificador.evaluate(previsoresTeste, classeTeste)
+
+# Retorna a probabilidade de cada um dos neurônios
+previsoes = classificador.predict(previsoresTeste)
+# Transforma as probabilidade em valores booleanos
+previsoes = (previsoes > 0.5)
+
+# A matriz de confusão espera arrays unidimencionais
+# nesse caso, cada linha do array tem 3 colunas (exemplo: 0 0 1)
+# o for está iterando a classeTeste e pegando o índice que tem a valor 1
+classeTeste2 = [np.argmax(t) for t in classeTeste]
+previsoes2 = [np.argmax(t) for t in previsoes]
+# linha: classe
+# coluna: como foi classificado
+matriz = confusion_matrix(classeTeste2, previsoes2)
