@@ -4,7 +4,6 @@ Created on Tue May 11 01:21:56 2021
 
 @author: santc
 """
-# http://archive.ics.uci.edu/ml/index.php
 
 import pandas as pd
 # Sequential, modelo sequencial de ligação entre camadas
@@ -21,6 +20,7 @@ from sklearn.preprocessing import LabelEncoder
 import numpy as np
 from sklearn.metrics import confusion_matrix
 
+# http://archive.ics.uci.edu/ml/index.php
 base = pd.read_csv('iris.csv')
 
 # Todas as linhas (:) e colunas do 0 ao 3 (0:4), 4 é o limite!
