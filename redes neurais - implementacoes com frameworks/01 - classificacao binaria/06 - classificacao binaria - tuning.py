@@ -16,8 +16,8 @@ from keras.layers import Dense, Dropout
 from keras.wrappers.scikit_learn import KerasClassifier
 from sklearn.model_selection import GridSearchCV
 
-previsores = pd.read_csv('../datasets/entradas_breast.csv')
-classe = pd.read_csv('../datasets/saidas_breast.csv')
+previsores = pd.read_csv('entradas_breast.csv')
+classe = pd.read_csv('saidas_breast.csv')
 
 def criarRede(optimizer, loss, kernel_initializer, activation, neurons):
     classificador = Sequential()
@@ -53,14 +53,13 @@ def criarRede(optimizer, loss, kernel_initializer, activation, neurons):
 
 classificador = KerasClassifier(build_fn = criarRede)
 
-parametros = {
-    'batch_size': [10, 30],
-    'epochs': [50, 100],
-    'optimizer': ['adam', 'sgd'],
-    'loss': ['binary_accuracy', 'hinge'],
-    'kernel_initializer': ['random_uniform', 'normal'],
-    'activation': ['relu', 'tanh'],
-    'neurons:': [16, 8]}
+parametros = {'batch_size': [10, 30],
+              'epochs': [50, 100],
+              'optimizer': ['adam', 'sgd'],
+              'loss': ['binary_crossentropy', 'hinge'],
+              'kernel_initializer': ['random_uniform', 'normal'],
+              'activation': ['relu', 'tanh'],
+              'neurons': [16, 8]}
 # GridSearchCV: tuning, busca os melhores parâmetros de configuração de uma rede neural
 # param_grid: parâmetros que serão testados na busca das melhores configurações
 # cv: quantidade de execuções
@@ -68,4 +67,3 @@ grid_search = GridSearchCV(estimator = classificador, param_grid = parametros, s
 grid_search = grid_search.fit(previsores, classe)
 melhores_parametros = grid_search.best_params_
 melhor_precisao = grid_search.best_score_
-
