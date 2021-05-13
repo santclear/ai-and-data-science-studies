@@ -6,7 +6,8 @@ Created on Wed May 12 11:49:32 2021
 """
 
 import pandas as pd
-from sklearn.preprocessing import LabelEncoder
+from sklearn.preprocessing import LabelEncoder, OneHotEncoder
+from sklearn.compose import ColumnTransformer
 
 # Base obtida do site https://www.kaggle.com/
 # 371528 registros (linhas - veículos cadastrados)
@@ -103,7 +104,7 @@ previsores = base.iloc[:, 1:13].values
 precoReal = base.iloc[:,0].values
 
 ################################################
-### PREPROCESSAMENTO: Converte atributos categóricos em numéricos
+### PREPROCESSAMENTO: Converte dados categóricos em numéricos
 labelEncoderPrevisores = LabelEncoder()
 previsores[:, 0] = labelEncoderPrevisores.fit_transform(previsores[:,0])
 previsores[:, 1] = labelEncoderPrevisores.fit_transform(previsores[:, 1])
@@ -112,3 +113,17 @@ previsores[:, 5] = labelEncoderPrevisores.fit_transform(previsores[:, 5])
 previsores[:, 8] = labelEncoderPrevisores.fit_transform(previsores[:, 8])
 previsores[:, 9] = labelEncoderPrevisores.fit_transform(previsores[:, 9])
 previsores[:, 10] = labelEncoderPrevisores.fit_transform(previsores[:, 10])
+
+################################################
+### PREPROCESSAMENTO: Converte dados numéricos em Onehot Encoder
+# Transforma as categorias 0, 1, 3, 5, 8, 9, 10 em algo parecido com:
+# 0: 1 0 0 ... 0 
+# 1: 0 1 0 ... 0
+# 3: 0 0 1 ... 0
+# ... ...
+# 10: ...
+# onehot ecoder pode ser usado quando não há uma ordem de importância entre 
+# os atributos, por exemplo o tipo de câmbio não pode ser afirmado que "manual 
+# é maior que automático" e vice-versa
+onehotencoder = ColumnTransformer(transformers=[("OneHot", OneHotEncoder(), [0,1,3,5,8,9,10])],remainder='passthrough')
+previsores = onehotencoder.fit_transform(previsores).toarray()
