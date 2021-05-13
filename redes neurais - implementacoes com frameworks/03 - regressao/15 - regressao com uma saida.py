@@ -8,6 +8,8 @@ Created on Wed May 12 11:49:32 2021
 import pandas as pd
 from sklearn.preprocessing import LabelEncoder, OneHotEncoder
 from sklearn.compose import ColumnTransformer
+from keras.models import Sequential
+from keras.layers import Dense
 
 # Base obtida do site https://www.kaggle.com/
 # 371528 registros (linhas - veículos cadastrados)
@@ -127,3 +129,30 @@ previsores[:, 10] = labelEncoderPrevisores.fit_transform(previsores[:, 10])
 # é maior que automático" e vice-versa
 onehotencoder = ColumnTransformer(transformers=[("OneHot", OneHotEncoder(), [0,1,3,5,8,9,10])],remainder='passthrough')
 previsores = onehotencoder.fit_transform(previsores).toarray()
+
+# Como não é problema de classificação, a variável é definida com o nome de um
+# substantivo que reflete a estratégia utilizada pela rede neural para realizar 
+# a previsão.
+# Nesse caso estratégia é de regressão
+regressor = Sequential()
+### CRIAÇÃO DA CAMADA OCULTA E DEFINIÇÃO DA CAMADA DE ENTRADA
+# units: quantidade de neurônios da camada oculta. 158 escolhido com base no
+# modelo (316(entradas) + 1(saída)) / 2 = 158
+# activation: função de ativação
+# input_dim: quantidade de atributos da camada de entrada. Nesse caso são 4 porque o dataset possuí 4 colunas. (atributos)
+regressor.add(Dense(units = 158, activation = 'relu', input_dim = 316))
+regressor.add(Dense(units = 158, activation = 'relu'))
+### CRIAÇÃO DA CAMADA DE SAÍDA
+# 1 neurônio na camada de saída, como é um problema de regressão, não é necessário 
+# o uso de função de ativação, pois o objetivo é prever um número e não uma 
+# probabilidade
+regressor.add(Dense(units = 1, activation = 'linear'))
+regressor.compile(loss = 'mean_absolute_error', optimizer = 'adam', metrics = ['mean_absolute_error'])
+
+# Treinamento
+regressor.fit(previsores, precoReal, batch_size = 300, epochs = 100)
+# Previsão
+previsoes = regressor.predict(previsores)
+
+precoReal.mean()
+previsoes.mean()
