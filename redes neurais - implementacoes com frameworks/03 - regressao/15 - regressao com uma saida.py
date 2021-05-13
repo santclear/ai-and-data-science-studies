@@ -90,3 +90,6 @@ valores = {'vehicleType':'limousine',
            'model':'golf',
            'fuelType':'benzin',
            'notRepairedDamage':'nein'}
+
+base = base.fillna(value = valores)
+################################################
