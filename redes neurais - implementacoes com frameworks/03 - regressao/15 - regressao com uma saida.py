@@ -58,11 +58,11 @@ base = base.drop('offerType', axis = 1)
 i1 = base.loc[base.price <= 10]
 # Em algumas situações é possível obter a média e aplicar nos registros inconsistentes
 # nesse caso, não será feito isso, a função deixo aqui apenas para ilustrar
-# a possíbilidade para alguns casos.
+# a possibilidade para alguns casos.
 base.price.mean()
 # Para esse caso será separado os registros com preços superiores a 10
 base = base [base.price > 10]
-# Aqui também é possível constatar que tem mais valores incosistentes, esses
+# Aqui também é possível constatar que tem mais valores inconsistentes, esses
 # valores estão acima de 350000, provavelmente foi algum erro no cadastro ou
 # na coleta do crawler
 i2 = base.loc[base.price > 350000]
