@@ -13,7 +13,7 @@ import pandas as pd
 base = pd.read_csv('autos.csv', encoding = 'ISO-8859-1')
 
 ################################################
-### Exclusão de colunas que não serão necessárias no treinamento e teste,
+### PREPROCESSAMENTO: Exclusão de colunas que não serão necessárias no treinamento e teste,
 ### após esse processamento a base terá 12 atributos (colunas)
 
 base = base.drop('dateCrawled', axis = 1)
@@ -45,6 +45,10 @@ base['offerType'].value_counts() # para analisar desbalanceamento
 base = base.drop('offerType', axis = 1)
 ################################################
 
+################################################
+### PREPROCESSAMENTO: Exclusão de valores inconsistentes de alguns registros
+### Obs.: Isso deve ser feito com cautela, pois a base deve ter um número
+### relativamente aceitável para um bom treinamento e teste
 # loc: localiza registros com base em parâmetros, nesse caso registros em que
 # o preço na coluna price seja menor ou igual a 10
 # nessa etapa é possível verificar que tem carros com valores baixos que não
@@ -62,3 +66,27 @@ base = base [base.price > 10]
 i2 = base.loc[base.price > 350000]
 # Desse modo será separado os registros com preços inferiores a 350000
 base = base.loc[base.price < 350000]
+################################################
+
+################################################
+### PREPROCESSAMENTO: Substituição de valores nulos por valores que tem maior
+### número de ocorrências
+### Obs.: Uma estratégia de tratamento de dados que pode ser usada para evitar
+### a estratégia anterior de exclusão de registros, desse modo a quantidade de 
+### registros da base se mantém o mesmo
+base.loc[pd.isnull(base['vehicleType'])]
+base['vehicleType'].value_counts() # maior: limousine 93627
+base.loc[pd.isnull(base['gearbox'])]
+base['gearbox'].value_counts() # maior: manuell 266612
+base.loc[pd.isnull(base['model'])]
+base['model'].value_counts() # maior: golf 28998
+base.loc[pd.isnull(base['fuelType'])] 
+base['fuelType'].value_counts() # maior: benzin 217648
+base.loc[pd.isnull(base['notRepairedDamage'])]
+base['notRepairedDamage'].value_counts() # maior: nein 259366
+
+valores = {'vehicleType':'limousine',
+           'gearbox':'manuell',
+           'model':'golf',
+           'fuelType':'benzin',
+           'notRepairedDamage':'nein'}
