@@ -6,6 +6,7 @@ Created on Wed May 12 11:49:32 2021
 """
 
 import pandas as pd
+from sklearn.preprocessing import LabelEncoder
 
 # Base obtida do site https://www.kaggle.com/
 # 371528 registros (linhas - veículos cadastrados)
@@ -93,3 +94,21 @@ valores = {'vehicleType':'limousine',
 
 base = base.fillna(value = valores)
 ################################################
+
+# Todas a linhas(:) e colunas de 1 até 12 (1:13), 13 é o limite!
+previsores = base.iloc[:, 1:13].values
+# Como não é problema de classificação, a variável é definida com o nome de um
+# valor que se deseja prever através de aproximação numérica.
+# Nesse caso é desejado prever o preço real dado um conjunto de parâmetros
+precoReal = base.iloc[:,0].values
+
+################################################
+### PREPROCESSAMENTO: Converte atributos categóricos em numéricos
+labelEncoderPrevisores = LabelEncoder()
+previsores[:, 0] = labelEncoderPrevisores.fit_transform(previsores[:,0])
+previsores[:, 1] = labelEncoderPrevisores.fit_transform(previsores[:, 1])
+previsores[:, 3] = labelEncoderPrevisores.fit_transform(previsores[:, 3])
+previsores[:, 5] = labelEncoderPrevisores.fit_transform(previsores[:, 5])
+previsores[:, 8] = labelEncoderPrevisores.fit_transform(previsores[:, 8])
+previsores[:, 9] = labelEncoderPrevisores.fit_transform(previsores[:, 9])
+previsores[:, 10] = labelEncoderPrevisores.fit_transform(previsores[:, 10])
