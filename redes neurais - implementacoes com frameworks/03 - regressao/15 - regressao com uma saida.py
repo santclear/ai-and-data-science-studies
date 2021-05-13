@@ -44,3 +44,21 @@ base = base.drop('seller', axis = 1)
 base['offerType'].value_counts() # para analisar desbalanceamento
 base = base.drop('offerType', axis = 1)
 ################################################
+
+# loc: localiza registros com base em parâmetros, nesse caso registros em que
+# o preço na coluna price seja menor ou igual a 10
+# nessa etapa é possível verificar que tem carros com valores baixos que não
+# fazem sentido, essa busca é apenas para constatar isso
+i1 = base.loc[base.price <= 10]
+# Em algumas situações é possível obter a média e aplicar nos registros inconsistentes
+# nesse caso, não será feito isso, a função deixo aqui apenas para ilustrar
+# a possíbilidade para alguns casos.
+base.price.mean()
+# Para esse caso será separado os registros com preços superiores a 10
+base = base [base.price > 10]
+# Aqui também é possível constatar que tem mais valores incosistentes, esses
+# valores estão acima de 350000, provavelmente foi algum erro no cadastro ou
+# na coleta do crawler
+i2 = base.loc[base.price > 350000]
+# Desse modo será separado os registros com preços inferiores a 350000
+base = base.loc[base.price < 350000]
