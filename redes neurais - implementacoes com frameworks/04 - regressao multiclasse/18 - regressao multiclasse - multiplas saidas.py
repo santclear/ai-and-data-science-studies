@@ -29,3 +29,13 @@ base = base.dropna(axis = 0)
 # Mantém os dados maior que 1 e exclui o restante
 base = base.loc[base['NA_Sales'] > 1]
 base = base.loc[base['EU_Sales'] > 1]
+
+# Para o que se deseja prever, não é bom para esse modelo uma variabilidade
+# alta de dados categóricos (Length: 223) em comparação com o tamanho 
+# total da base (Size: 258)
+base['Name'].value_counts()
+# A coluna Name será excluída, mas antes será salva na variável nomeJogos para
+# fins de análise
+nomeJogos = base.Name
+# Excluí a coluna Name
+base = base.drop('Name', axis = 1)
