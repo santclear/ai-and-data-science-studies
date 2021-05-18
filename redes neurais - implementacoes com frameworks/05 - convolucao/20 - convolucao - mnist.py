@@ -40,3 +40,24 @@ previsoresTeste /= 255
 # Isso é necessário porque é um problema de classificação multiclasses
 classeTreinamento = np_utils.to_categorical(yTreinamento, 10)
 classeTeste = np_utils.to_categorical(yTeste, 10)
+
+classificador = Sequential()
+# 32 detectores de características (mapas de características - kernels)
+# 32 para otimizar o processamento e fins didáticos, mas recomendável começar 
+# com 64
+# kernel_size: 3,3 (tamanho do detector de características)
+# input_shape: dimensões da imagem (28,28) e canal(1)
+classificador.add(Conv2D(32,(3,3),input_shape=(28,28,1), activation='relu'))
+
+# Seletor do mapa de características
+classificador.add(MaxPooling2D(pool_size=(2,2)))
+
+classificador.add(Flatten())
+
+classificador.add(Dense(units=128, activation='relu'))
+classificador.add(Dense(units=10, activation='softmax'))
+classificador.compile(optimizer = 'adam', loss = 'categorical_crossentropy', metrics = ['accuracy'])
+
+classificador.fit(previsoresTreinamento, classeTreinamento, batch_size = 128, epochs = 5, validation_data=(previsoresTeste, classeTeste))
+
+resultado = classificador.evaluete(previsoresTeste, classeTeste)
