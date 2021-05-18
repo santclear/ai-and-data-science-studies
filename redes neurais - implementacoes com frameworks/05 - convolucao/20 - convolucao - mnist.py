@@ -60,4 +60,4 @@ classificador.compile(optimizer = 'adam', loss = 'categorical_crossentropy', met
 
 classificador.fit(previsoresTreinamento, classeTreinamento, batch_size = 128, epochs = 5, validation_data=(previsoresTeste, classeTeste))
 
-resultado = classificador.evaluete(previsoresTeste, classeTeste)
+resultado = classificador.evaluate(previsoresTeste, classeTeste)
