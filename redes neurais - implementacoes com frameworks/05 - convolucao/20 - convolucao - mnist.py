@@ -8,9 +8,10 @@ Created on Mon May 17 12:02:40 2021
 import matplotlib.pyplot as plt
 from keras.datasets import mnist
 from keras.models import Sequential
-from keras.layers import Dense, Flatten
+from keras.layers import Dense, Flatten, Dropout
 from keras.utils import np_utils
 from keras.layers import Conv2D, MaxPooling2D
+from keras.layers.normalization import BatchNormalization
 
 # É convencionado o uso do X para atributos previsores e y para as classes
 # Cada imagem tem 28x28 pixels
@@ -48,13 +49,24 @@ classificador = Sequential()
 # kernel_size: 3,3 (tamanho do detector de características)
 # input_shape: dimensões da imagem (28,28) e canal(1)
 classificador.add(Conv2D(32,(3,3),input_shape=(28,28,1), activation='relu'))
-
+# Normalização na camada de covulação (mapa de características) para reduzir o 
+# tempo de treinamento
+classificador.add(BatchNormalization())
 # Seletor do mapa de características
 classificador.add(MaxPooling2D(pool_size=(2,2)))
+classificador.add(Flatten())
 
+classificador.add(Conv2D(32, (3,3), activation='relu'))
+classificador.add(BatchNormalization())
+classificador.add(MaxPooling2D(pool_size=(2,2)))
 classificador.add(Flatten())
 
 classificador.add(Dense(units=128, activation='relu'))
+classificador.add(Dropout(0.2))
+
+classificador.add(Dense(units=128, activation='relu'))
+classificador.add(Dropout(0.2))
+
 classificador.add(Dense(units=10, activation='softmax'))
 classificador.compile(optimizer = 'adam', loss = 'categorical_crossentropy', metrics = ['accuracy'])
 
