@@ -28,11 +28,30 @@ baseTreinamentoNormalizada = normalizador.fit_transform(baseTreinamento)
 previsores = []
 precoReal = []
 
-# 90: Índice inicial 
-for i in range(90, 1242):
-    # i-90:i -> Índice 0 até i(90 registros iniciais) da coluna 0
-    previsores.append(baseTreinamentoNormalizada[i-90:i,0])
-    precoReal.append(baseTreinamentoNormalizada[i, 0])
+# 1142 qtdRegistrosTreinamento
+qtdRegistrosTreinamento = len(baseTreinamento)
+# 90 Períodos
+for i in range(90, qtdRegistrosTreinamento):
+    # A cada iteração separa 90 amostras de preços de abertura
+    # Por exemplo, se a série tivesse somente 10 preços de abertura (3,5,1,1,7,8,2,9,3,4) 
+    # e a amostra fosse 2 a variável amostraPeiodos ficaria assim:
+    # 1º iteração -> amostraPeriodos = [3,5]
+    # 2ª iteração -> amostraPeriodos = [5,1]
+    # 3ª iteração -> amostraPeriodos = [1,1]
+    # 4ª iteração -> amostraPeriodos = [1,7]
+    # ...
+    amostraPeriodos = baseTreinamentoNormalizada[i-90:i,0]
+    previsores.append(amostraPeriodos)
+    
+    # Para cada amostra, um preço de abertura para treinamento será usado
+    # Tomando o exemplo anterior (3,5,1,1,7,8,2,9,3,4), a cada interação ficará assim:
+    # 1º iteração [3,5] -> precoNormalizado = 1
+    # 2ª iteração [5,1] -> precoNormalizado = 1
+    # 3ª iteração [1,1] -> precoNormalizado = 7
+    # 4ª iteração [1,7] -> precoNormalizado = 8
+    # ...
+    precoNormalizado = baseTreinamentoNormalizada[i, 0]
+    precoReal.append(precoNormalizado)
 
 previsores, precoReal = np.array(previsores), np.array(precoReal)
 
