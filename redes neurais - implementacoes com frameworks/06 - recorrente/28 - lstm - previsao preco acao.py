@@ -5,8 +5,8 @@ Created on Fri May 21 11:06:27 2021
 @author: santc
 """
 
-from keras.models import Sequential
-from keras.layers import Dense, Dropout
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense, Dropout, LSTM
 import numpy as np
 import pandas as pd
 
@@ -28,7 +28,7 @@ baseTreinamentoNormalizada = normalizador.fit_transform(baseTreinamento)
 previsores = []
 precoReal = []
 
-# 1142 qtdRegistrosTreinamento
+# 1242 qtdRegistrosTreinamento
 qtdRegistrosTreinamento = len(baseTreinamento)
 # 90 Períodos
 for i in range(90, qtdRegistrosTreinamento):
@@ -65,3 +65,30 @@ intervalosTempo = previsores.shape[1]
 # input_dim
 qtdAtributosPrevisores = 1
 previsores = np.reshape(previsores, (qtdRegistros, intervalosTempo, qtdAtributosPrevisores))
+
+regressor = Sequential()
+
+# units: 100 células de memória, para dimensionalidade, captura tendência no decorrer
+# do tempo, captura a variação temporal
+# return_sequences: indica que a informação será encaminhada a diante para a camadas,
+# subsequentes, obrigatório quando há mais de 1 camada LSTM
+regressor.add(LSTM(units=100, return_sequences=True, input_shape=(intervalosTempo, 1)))
+regressor.add(Dropout(0.3))
+
+regressor.add(LSTM(units=50, return_sequences=True))
+regressor.add(Dropout(0.3))
+
+regressor.add(LSTM(units=50, return_sequences=True))
+regressor.add(Dropout(0.3))
+
+# Retirado o parâmetro return_sequences, pois não há mais camadas LSTM subsequentes
+regressor.add(LSTM(units=50, input_shape=(intervalosTempo, 1)))
+regressor.add(Dropout(0.3))
+
+# Como os dados foram normalizados para retornar valores entre 0 e 1, a função
+# sigmoid também pode ser usada
+regressor.add(Dense(units=1, activation='linear'))
+
+regressor.compile(optimizer='rmsprop', loss='mean_squared_error', metrics=['mean_absolute_error'])
+
+regressor.fit(previsores, precoReal, epochs=100, batch_size=32)
