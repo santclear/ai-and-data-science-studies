@@ -4,6 +4,8 @@ Created on Fri May 21 11:06:27 2021
 
 @author: santc
 """
+import tensorflow as tf
+print("Num GPUs Available: ", len(tf.config.list_physical_devices('GPU')))
 
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Dropout, LSTM
@@ -11,6 +13,8 @@ import numpy as np
 import pandas as pd
 
 from sklearn.preprocessing import MinMaxScaler
+
+import matplotlib.pyplot as plt
 
 base = pd.read_csv('petr4_treinamento.csv')
 
@@ -92,3 +96,39 @@ regressor.add(Dense(units=1, activation='linear'))
 regressor.compile(optimizer='rmsprop', loss='mean_squared_error', metrics=['mean_absolute_error'])
 
 regressor.fit(previsores, precoReal, epochs=100, batch_size=32)
+
+### TESTE ##############################
+
+baseTeste = pd.read_csv('petr4_teste.csv')
+
+# Todas as linhas ":" e a coluna 1 "1:2" (Open - Abertura)
+precoRealTeste = baseTeste.iloc[:, 1:2].values
+
+# A base de dados de teste tem apenas 22 registros, dessa forma uma opção encontrada,
+# apenas para o teste, foi concatenar a base de treinamento com a base de teste
+# concatena base e baseTeste por coluna (axis=0)
+baseCompleta = pd.concat((base['Open'], baseTeste['Open']), axis = 0)
+
+# Seleciona todos preços da base de teste + um pedaço da base de treinamento
+# totalizando 112 registros
+# Isso é necessário nesse caso, porque a LSTM espera que cada registro seja
+# fatias de períodos subsequentes, como são 22 registros é necessário que o tamanho
+# da base seja 112 para o período 90. No laço abaixo os registros dessa base serão
+# iterados 22 vezes (porque 112 - 90 = 22), a cada iteração será concatenado 90 preços,
+# é como se fosse uma janela de 90 perídos sendo deslocada para obter os preços
+entradas = baseCompleta[len(baseCompleta) - len(baseTeste) - 90:].values
+entradas = entradas.reshape(-1, 1)
+entradas = normalizador.transform(entradas)
+
+XTeste = []
+for i in range(90, 112):
+    XTeste.append(entradas[i-90:i, 0])
+	
+	
+XTeste = np.array(XTeste)
+XTeste = np.reshape(XTeste, (XTeste.shape[0], XTeste.shape[1], 1))
+previsoes = regressor.predict(XTeste)
+previsoes = normalizador.inverse_transform(previsoes)
+
+previsoes.mean()
+precoRealTeste.mean()
