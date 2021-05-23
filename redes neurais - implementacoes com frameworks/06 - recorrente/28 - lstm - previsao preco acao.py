@@ -95,7 +95,7 @@ regressor.add(Dense(units=1, activation='linear'))
 
 regressor.compile(optimizer='rmsprop', loss='mean_squared_error', metrics=['mean_absolute_error'])
 
-regressor.fit(previsores, precoReal, epochs=100, batch_size=32)
+regressor.fit(previsores, precoReal, epochs=200, batch_size=32)
 
 ### TESTE ##############################
 
@@ -110,7 +110,7 @@ precoRealTeste = baseTeste.iloc[:, 1:2].values
 baseCompleta = pd.concat((base['Open'], baseTeste['Open']), axis = 0)
 
 # Seleciona todos preços da base de teste + um pedaço da base de treinamento
-# totalizando 112 registros
+# totalizando 112 registros.
 # Isso é necessário nesse caso, porque a LSTM espera que cada registro seja
 # fatias de períodos subsequentes, como são 22 registros é necessário que o tamanho
 # da base seja 112 para o período 90. No laço abaixo os registros dessa base serão
@@ -132,3 +132,11 @@ previsoes = normalizador.inverse_transform(previsoes)
 
 previsoes.mean()
 precoRealTeste.mean()
+    
+plt.plot(precoRealTeste, color = 'red', label = 'Preço real')
+plt.plot(previsoes, color = 'blue', label = 'Previsões')
+plt.title('Previsão preço da ação PETR4')
+plt.xlabel('Tempo')
+plt.ylabel('Valor Yahoo')
+plt.legend()
+plt.show()
