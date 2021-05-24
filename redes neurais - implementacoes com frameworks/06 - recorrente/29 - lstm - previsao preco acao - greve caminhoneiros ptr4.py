@@ -52,7 +52,7 @@ regressor.add(Dropout(0.3))
 regressor.add(LSTM(units=50, return_sequences=True))
 regressor.add(Dropout(0.3))
 
-regressor.add(LSTM(units=50, input_shape=(intervalosTempo, 1)))
+regressor.add(LSTM(units=50))
 regressor.add(Dropout(0.3))
 
 

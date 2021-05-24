@@ -97,7 +97,7 @@ regressor.add(Dense(units=1, activation='linear'))
 
 regressor.compile(optimizer='rmsprop', loss='mean_squared_error', metrics=['mean_absolute_error'])
 
-regressor.fit(previsores, precoReal, epochs=200, batch_size=32)
+regressor.fit(previsores, precoReal, epochs=100, batch_size=32)
 
 ### TESTE ##############################
 
