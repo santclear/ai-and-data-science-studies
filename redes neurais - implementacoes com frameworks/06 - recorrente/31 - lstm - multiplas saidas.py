@@ -10,102 +10,82 @@ print("Num GPUs Available: ", len(tf.config.list_physical_devices('GPU')))
 
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Dropout, LSTM
+from sklearn.preprocessing import MinMaxScaler
 import numpy as np
 import pandas as pd
-
-from sklearn.preprocessing import MinMaxScaler
-
 import matplotlib.pyplot as plt
 
 base = pd.read_csv('petr4_treinamento.csv')
-
-# Exclui os valores na
 base = base.dropna()
 
-# Todas as linhas ":" e a coluna 1 "1:2" (Open - Abertura)
-baseTreinamentoAbertura = base.iloc[:, 1:2].values
-# Todas as linhas ":" e a coluna 1 "1:2" (Máxima)
-baseTreinamentoMaxima = base.iloc[:, 2:3].values
+baseTreinamentoPrecosAbertura = base.iloc[:, 1:2].values
+baseTreinamentoPrecosMaxima = base.iloc[:, 2:3].values
 
-# Converte os preços de abertura para a escala de valores entre 0 e 1, isso
-# dimui o custo de processamento
 normalizador = MinMaxScaler(feature_range=(0,1))
-baseTreinamentoAberturaNormalizada = normalizador.fit_transform(baseTreinamentoAbertura)
-baseTreinamentoMaximaNormalizada = normalizador.fit_transform(baseTreinamentoMaxima)
+baseTreinamentoPrecosAberturaNormalizada = normalizador.fit_transform(baseTreinamentoPrecosAbertura)
+baseTreinamentoPrecosMaximaNormalizada = normalizador.fit_transform(baseTreinamentoPrecosMaxima)
 
 previsores = []
+precosReaisAbertura = []
+precosReaisMaxima = []
 
-precoRealAbertura = []
-precoRealMaxima = []
-
-# 1242 qtdRegistrosTreinamento
-qtdRegistrosTreinamentoAbertura = len(baseTreinamentoAbertura)
-# Quantidade de períodos que serão utilizados a cada iteração no treinamento e teste
-# da rede neural
 periodoAmostral = 90
-
-for i in range(periodoAmostral, qtdRegistrosTreinamentoAbertura):
-    # A cada iteração separa 90 amostras de preços de abertura
-    # Por exemplo, se a série tivesse somente 10 preços de abertura (3,5,1,1,7,8,2,9,3,4) 
-    # e a amostra fosse 2 a variável amostraPeiodos ficaria assim:
-    # 1º iteração -> amostraPeriodos = [3,5]
-    # 2ª iteração -> amostraPeriodos = [5,1]
-    # 3ª iteração -> amostraPeriodos = [1,1]
-    # 4ª iteração -> amostraPeriodos = [1,7]
-    # ...
-	# 0 é preço de de abertura (Open)
-    amostraPeriodosAbertura = baseTreinamentoAbertura[i-periodoAmostral:i,0]
-    previsores.append(amostraPeriodosAbertura)
-    
-    # Para cada amostra, um preço de abertura para treinamento será usado
-    # Tomando o exemplo anterior (3,5,1,1,7,8,2,9,3,4), a cada interação ficará assim:
-    # 1º iteração [3,5] -> precoNormalizado = 1
-    # 2ª iteração [5,1] -> precoNormalizado = 1
-    # 3ª iteração [1,1] -> precoNormalizado = 7
-    # 4ª iteração [1,7] -> precoNormalizado = 8
-    # ...
-	# 0 é preço de de abertura (Open)
-    precoAberturaNormalizada = baseTreinamentoAberturaNormalizada[i, 0]
-    precoRealAbertura.append(precoAberturaNormalizada)
+for i in range(periodoAmostral, 1242):
+    previsores.append(baseTreinamentoPrecosAberturaNormalizada[i-periodoAmostral:i, 0])
+    precosReaisAbertura.append(baseTreinamentoPrecosAberturaNormalizada[i, 0])
+    precosReaisMaxima.append(baseTreinamentoPrecosMaximaNormalizada[i, 0])
 	
-    precoMaximaNormalizada = baseTreinamentoMaximaNormalizada[i, 0]
-    precoRealMaxima.append(precoMaximaNormalizada)
-	
-previsores, precoRealAbertura, precoRealMaxima = (
-	np.array(previsores), 
-	np.array(precoRealAbertura), 
-	np.array(precoRealMaxima))
+previsores, precosReaisAbertura, precosReaisMaxima = np.array(previsores), np.array(precosReaisAbertura), np.array(precosReaisMaxima)
+previsores = np.reshape(previsores, (previsores.shape[0], previsores.shape[1], 1))
 
-# batch_size
-# 1152 registros
-qtdRegistrosAbertura = previsores.shape[0]
-# timesteps
-# 90 intervalos
-periodoAberturaAmostral = previsores.shape[1]
-# 1 atributo previsor -> Preço de abertura Open
-# input_dim
-qtdAtributosPrevisores = 1
-previsores = np.reshape(previsores, (qtdRegistrosAbertura, periodoAberturaAmostral, qtdAtributosPrevisores))
-
-precosReais = np.column_stack((precoRealAbertura, precoRealMaxima))
-
+precosReaisAberturaMaxima = np.column_stack((precosReaisAbertura, precosReaisMaxima))
 
 regressor = Sequential()
-
-regressor.add(LSTM(units=100, return_sequences=True, input_shape=(periodoAmostral, qtdAtributosPrevisores)))
+regressor.add(LSTM(units = 100, return_sequences = True, input_shape = (previsores.shape[1], 1)))
 regressor.add(Dropout(0.3))
 
-regressor.add(LSTM(units=50, return_sequences=True))
+regressor.add(LSTM(units = 50, return_sequences = True))
 regressor.add(Dropout(0.3))
 
-regressor.add(LSTM(units=50, return_sequences=True))
+regressor.add(LSTM(units = 50, return_sequences = True))
 regressor.add(Dropout(0.3))
 
-regressor.add(LSTM(units=50))
+regressor.add(LSTM(units = 50))
 regressor.add(Dropout(0.3))
 
-# Como os dados foram normalizados para retornar valores entre 0 e 1, a função
-# sigmoid também pode ser usada
-regressor.add(Dense(units=2, activation='linear'))
-# Para esse problema também poderia ser usado o optimizer adam
-regressor.compile(optimizer='rmsprop', loss='mean_squared_error', metrics=['mean_absolute_error'])
+regressor.add(Dense(units = 2, activation = 'linear'))
+
+regressor.compile(optimizer = 'rmsprop', loss = 'mean_squared_error',
+                  metrics = ['mean_absolute_error'])
+regressor.fit(previsores, precosReaisAberturaMaxima, epochs = 100, batch_size = 32)
+
+base_teste = pd.read_csv('petr4_teste.csv')
+precosReaisAberturaTeste = base_teste.iloc[:, 1:2].values
+precosReaisMaximaTeste = base_teste.iloc[:, 2:3].values
+
+base_completa = pd.concat((base['Open'], base_teste['Open']), axis = 0)
+entradas = base_completa[len(base_completa) - len(base_teste) - periodoAmostral:].values
+entradas = entradas.reshape(-1, 1)
+entradas = normalizador.transform(entradas)
+
+XTeste = []
+for i in range(periodoAmostral, 112):
+    XTeste.append(entradas[i-periodoAmostral:i, 0])
+XTeste = np.array(XTeste)
+XTeste = np.reshape(XTeste, (XTeste.shape[0], XTeste.shape[1], 1))
+
+previsoes = regressor.predict(XTeste)
+previsoes = normalizador.inverse_transform(previsoes)
+
+   
+plt.plot(precosReaisAberturaTeste, color = 'red', label = 'Preços abertura real')
+plt.plot(precosReaisMaximaTeste, color = 'black', label = 'Preços máxima real')
+
+plt.plot(previsoes[:, 0], color = 'blue', label = 'Previsões abertura')
+plt.plot(previsoes[:, 1], color = 'orange', label = 'Previsões máxima')
+
+plt.title('Previsão de preços das ações')
+plt.xlabel('Tempo')
+plt.ylabel('Valor Yahoo')
+plt.legend()
+plt.show()
