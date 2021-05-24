@@ -44,6 +44,7 @@ for i in range(90, qtdRegistrosTreinamento):
     # 3ª iteração -> amostraPeriodos = [1,1]
     # 4ª iteração -> amostraPeriodos = [1,7]
     # ...
+	# 0 é preço de de abertura (Open)
     amostraPeriodos = baseTreinamentoNormalizada[i-90:i,0]
     previsores.append(amostraPeriodos)
     
@@ -54,6 +55,7 @@ for i in range(90, qtdRegistrosTreinamento):
     # 3ª iteração [1,1] -> precoNormalizado = 7
     # 4ª iteração [1,7] -> precoNormalizado = 8
     # ...
+	# 0 é preço de de abertura (Open)
     precoNormalizado = baseTreinamentoNormalizada[i, 0]
     precoReal.append(precoNormalizado)
 
@@ -86,7 +88,7 @@ regressor.add(LSTM(units=50, return_sequences=True))
 regressor.add(Dropout(0.3))
 
 # Retirado o parâmetro return_sequences, pois não há mais camadas LSTM subsequentes
-regressor.add(LSTM(units=50, input_shape=(intervalosTempo, 1)))
+regressor.add(LSTM(units=50))
 regressor.add(Dropout(0.3))
 
 # Como os dados foram normalizados para retornar valores entre 0 e 1, a função
