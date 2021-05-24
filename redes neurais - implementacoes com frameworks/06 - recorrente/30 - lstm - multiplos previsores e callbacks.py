@@ -121,3 +121,50 @@ regressor.fit(previsores, precoReal, epochs=100, batch_size=32,
 				  reduzTaxaAprendizagemSeParouDeMelhorar,
 				  salvaMelhoresPesos)
 			  )
+
+### TESTE ##############################
+
+baseTeste = pd.read_csv('petr4_teste.csv')
+
+# Todas as linhas ":" e a coluna 1 "1:2" (Open - Abertura)
+precoRealTeste = baseTeste.iloc[:, 1:2].values
+
+frames = [base, baseTeste]
+# A base de dados de teste tem apenas 22 registros, dessa forma uma opção encontrada,
+# apenas para o teste, foi concatenar a base de treinamento com a base de teste
+# concatena base e baseTeste por coluna (axis=0)
+baseCompleta = pd.concat(frames, axis = 0)
+baseCompleta = baseCompleta.drop('Date', axis=1)
+
+# Seleciona todos preços da base de teste + um pedaço da base de treinamento
+# totalizando 112 registros.
+# Isso é necessário nesse caso, porque a LSTM espera que cada registro seja
+# fatias de períodos subsequentes, como são 22 registros é necessário que o tamanho
+# da base seja 112 para o período 90. No laço abaixo os registros dessa base serão
+# iterados 22 vezes (porque 112 - 90 = 22), a cada iteração será concatenado 90 preços,
+# é como se fosse uma janela de 90 perídos sendo deslocada para obter os preços
+entradas = baseCompleta[len(baseCompleta) - len(baseTeste) - periodoAmostral:].values
+entradas = normalizador.transform(entradas)
+
+qtdRegistros = len(entradas)
+XTeste = []
+for i in range(periodoAmostral, qtdRegistros):
+    XTeste.append(entradas[i-periodoAmostral:i, 0:6])
+
+XTeste = np.array(XTeste)
+previsoes = regressor.predict(XTeste)
+
+normalizadorPrevisao = MinMaxScaler(feature_range=(0,1))
+normalizadorPrevisao.fit_transform(baseTreinamento[:,0:1])
+previsoes = normalizadorPrevisao.inverse_transform(previsoes)
+
+previsoes.mean()
+precoRealTeste.mean()
+    
+plt.plot(precoRealTeste, color = 'red', label = 'Preço real')
+plt.plot(previsoes, color = 'blue', label = 'Previsões')
+plt.title('Previsão preço da ação PETR4')
+plt.xlabel('Tempo')
+plt.ylabel('Valor Yahoo')
+plt.legend()
+plt.show()
