@@ -142,11 +142,11 @@ XTeste = np.reshape(XTeste, (qtdRegistrosTeste, periodoAmostral, 1))
 previsoes = regressor.predict(XTeste)
 previsoes = normalizador.inverse_transform(previsoes)
 
-plt.plot(precosReaisAberturaTeste, color = 'red', label = 'Preços abertura real')
-plt.plot(precosReaisMaximaTeste, color = 'blue', label = 'Preços máxima real')
+plt.plot(precosReaisAberturaTeste, color = 'blue', label = 'Preços abertura real')
+plt.plot(previsoes[:, 0], color = 'green', label = 'Previsões abertura')
 
-plt.plot(previsoes[:, 0], color = 'orange', label = 'Previsões abertura')
-plt.plot(previsoes[:, 1], color = 'green', label = 'Previsões máxima')
+plt.plot(precosReaisMaximaTeste, color = 'red', label = 'Preços máxima real')
+plt.plot(previsoes[:, 1], color = 'orange', label = 'Previsões máxima')
 
 plt.title('Previsão de preços das ações')
 plt.xlabel('Tempo')
