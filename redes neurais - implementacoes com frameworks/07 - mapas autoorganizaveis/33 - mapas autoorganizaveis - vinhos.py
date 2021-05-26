@@ -55,3 +55,31 @@ pcolor(som.distance_map().T)
 # próximo do amarelo (1) mais diferente o neurônio é de seus vizinhos e sendo assim
 # a distância entre ele e seus vizinhos próximos é grande tornando-o pouco confiável
 colorbar()
+
+# w: Coordenadas(horizontal,vertical) do neurônio centróide (BMU) do 3º registro
+w = som.winner(X[2])
+# o: circulo -> r: vermelho
+# s: quadrado -> g: verde
+# D: quadrado rotacionado 90º -> b: azul
+markers = ['o', 's', 'D']
+color = ['r', 'g', 'b']
+# O vetor color começa em 0, é necessário essa tranformação para associar as cores
+# r, g e b aos markers
+y[y == 1] = 0
+y[y == 2] = 1
+y[y == 3] = 2
+
+for i, x in enumerate(X):
+	# w: Coordenadas(horizontal,vertical) do neurônio centróide (BMU) do 3º registro
+    w = som.winner(x)
+	
+	# 0.5 posiciona cada figura no meio de cada box do mapa (coordenadas 
+	#(horizontal, vertical) => (w[0], w[1]) )
+	# markers[y[i]]: marcadores
+	# markerfacecolor: Cor da fonte
+	# markersize: tamanho do marcador
+	# markeredgecolor: cor dos símbolos
+	# markeredgewidth: borda
+    plot(w[0] + 0.5, w[1] + 0.5, markers[y[i]],
+         markerfacecolor = 'None', markersize = 10,
+         markeredgecolor = color[y[i]], markeredgewidth = 2)
