@@ -12,6 +12,7 @@ import numpy as np
 # num_hidden: Quantidade neurônios da camada oculta
 rbm = RBM(num_visible = 6, num_hidden = 2)
 
+# Base de treinamento
 # Cada registro da matriz indica se o usuário assistiu ou não um determinado filme
 base = np.array([[1,1,1,0,0,0],# Esse usuário assistiu todos os filmes de terror e nenhum de comédia
                  [1,0,1,0,0,0],# Esse usuário assistiu 2 filmes de terror e nenhum de comédia
@@ -30,3 +31,27 @@ rbm.train(base, max_epochs=5000)
 # "A bruxa","Invocação do mal",... e "American pie"
 # Neurônios com maior valor, significa que está ativado
 rbm.weights
+
+# Dados para teste de previsão
+# Usuário assistiu 2 filmes de terror e 1 de comédia
+usuario1 = np.array([[1,1,0,1,0,0]])
+# Usuário assistiu 2 filmes de comédia e nenhum de terror
+usuario2 = np.array([[0,0,0,1,1,0]])
+
+# Retorna qual dos neurônimos foram ativados
+# Índice 0 comédia e índice 1 terror
+rbm.run_visible(usuario1)
+rbm.run_visible(usuario2)
+
+# Retorna os neurônios que estão ativados na camada oculta para o usuário 2
+camada_escondida = np.array([[1,0]])
+# Com base na ativação dos neurônios da camada oculta, retorna uma recomendação
+recomendacao = rbm.run_hidden(camada_escondida)
+
+filmes = ["A bruxa", "Invocação do mal", "O chamado", "Se beber não case", "Gente grande", "American pie"]
+for i in range(len(usuario1[0])):
+    #print(usuario1[0,i])
+	# Se o usuario2 não assistiu (0) e recomendacao for 1 então recomenda
+    if usuario2[0,i] == 0 and recomendacao[0,i] == 1:
+        print(filmes[i])
+    
