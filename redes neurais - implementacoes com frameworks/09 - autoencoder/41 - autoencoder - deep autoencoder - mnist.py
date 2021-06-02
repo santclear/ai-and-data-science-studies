@@ -38,7 +38,7 @@ autoencoder.compile(optimizer = 'adam', loss = 'binary_crossentropy',
                     metrics = ['accuracy'
 ])
 autoencoder.fit(previsoresTreinamento, previsoresTreinamento,
-                epochs = 300, batch_size = 256, 
+                epochs = 50, batch_size = 256, 
                 validation_data = (previsoresTeste, previsoresTeste))
 
 dimensaoOriginal = Input(shape=(784,))
